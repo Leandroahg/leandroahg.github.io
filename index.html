@@ -10,20 +10,19 @@
 
     <script>
         const Pi = window.Pi;
-        // Inicializa o SDK no modo Sandbox (teste)
-        Pi.init({ version: "2.0", sandbox: true });
+        // Inicializa solicitando o escopo de pagamentos
+        Pi.init({ version: "2.0", sandbox: true, scope: ["payments"] });
 
         document.getElementById('btn-pagamento').addEventListener('click', async () => {
             try {
-                // Solicita a criação do pagamento
                 const payment = await Pi.createPayment({
                     amount: 0.1,
-                    memo: "Teste de pagamento",
+                    memo: "Teste",
                     metadata: { type: "test" },
                 }, {
                     onReadyForServerCreate: (id) => alert("Sucesso! ID: " + id),
-                    onCancel: () => alert("Pagamento cancelado pelo usuário."),
-                    onError: (err) => alert("Erro no pagamento: " + err.message),
+                    onCancel: () => alert("Cancelado"),
+                    onError: (err) => alert("Erro: " + err.message),
                 });
             } catch (err) {
                 alert("Erro ao iniciar: " + err);
@@ -32,4 +31,3 @@
     </script>
 </body>
 </html>
-
