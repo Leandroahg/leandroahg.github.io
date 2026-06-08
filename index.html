@@ -9,20 +9,23 @@
     <button id="btn-pagamento">Processar Pagamento de Teste</button>
 
     <script>
+        // Inicializa o SDK da Pi
+        const Pi = window.Pi;
+        Pi.init({ version: "2.0" });
+
         document.getElementById('btn-pagamento').addEventListener('click', async () => {
-            alert("Botão clicado!");
             try {
                 const payment = await Pi.createPayment({
                     amount: 0.1,
                     memo: "Teste",
                     metadata: { type: "test" },
                 }, {
-                    onReadyForServerCreate: (id) => alert("Preparado: " + id),
+                    onReadyForServerCreate: (id) => alert("Preparado! ID: " + id),
                     onCancel: () => alert("Cancelado"),
                     onError: (err) => alert("Erro: " + err.message),
                 });
             } catch (err) {
-                alert("Erro catch: " + err);
+                alert("Erro: " + err);
             }
         });
     </script>
