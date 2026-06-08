@@ -14,21 +14,22 @@
 
         document.getElementById('btn-pagamento').addEventListener('click', async () => {
             try {
-                // Autenticação completa com as funções que ele exige
-                const auth = await Pi.authenticate(["payments"], {
-                    onIncompletePaymentFound: (payment) => console.log(payment),
-                    onReadyForServerCreate: (payment) => console.log(payment)
+                // Autenticação com as funções obrigatórias vazias para evitar o erro
+                await Pi.authenticate(["payments"], {
+                    onIncompletePaymentFound: function(payment) {},
+                    onReadyForServerCreate: function(payment) {}
                 });
-                
+
                 // Criação do pagamento
-                const payment = await Pi.createPayment({
+                await Pi.createPayment({
                     amount: 0.1,
                     memo: "Teste",
                     metadata: { type: "test" },
                 }, {
-                    onReadyForServerCreate: (id) => alert("Sucesso! ID: " + id),
-                    onCancel: () => alert("Cancelado"),
-                    onError: (err) => alert("Erro: " + err.message),
+                    onReadyForServerCreate: function(paymentId) { alert("Preparado! ID: " + paymentId); },
+                    onCancel: function(paymentId) { alert("Cancelado"); },
+                    onError: function(error, paymentId) { alert("Erro: " + error.message); },
+                    onAlgorithmDecisionMade: function(paymentId) { alert("Decisão tomada"); }
                 });
             } catch (err) {
                 alert("Erro: " + err.message);
