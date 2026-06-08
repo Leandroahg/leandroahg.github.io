@@ -14,13 +14,13 @@
 
         document.getElementById('btn-pagamento').addEventListener('click', async () => {
             try {
-                // Solicita autenticação com o escopo de pagamentos
+                // Autenticação necessária antes do pagamento
                 await Pi.authenticate(["payments"], {
                     onIncompletePaymentFound: (payment) => { console.log(payment); },
                     onReadyForServerCreate: (payment) => { console.log(payment); }
                 });
 
-                // Cria o pagamento conforme exigido pelo SDK
+                // Criação do pagamento
                 await Pi.createPayment({
                     amount: 0.1,
                     memo: "Teste final",
@@ -38,4 +38,3 @@
     </script>
 </body>
 </html>
-
