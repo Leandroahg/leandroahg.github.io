@@ -5,27 +5,15 @@
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 </head>
 <body>
-    <h1>Bem-vindo ao Pi Quest Evolution</h1>
-    <p>Clique no botão abaixo para testar a transação:</p>
-    
-    <button id="btn-pagamento">Processar Pagamento de Teste</button>
+    <h1>Pi Quest Evolution - Teste</h1>
+    <button id="btn-teste">Testar Conexão com Pi</button>
 
     <script>
-        const Pi = window.Pi;
-        document.getElementById('btn-pagamento').addEventListener('click', async () => {
-            try {
-                // Aqui iniciamos o pagamento de teste
-                const payment = await Pi.createPayment({
-                    amount: 0.1, // Quantidade de Pi para teste
-                    memo: "Teste de pagamento do Pi Quest Evolution",
-                    metadata: { type: "test" },
-                }, {
-                    onReadyForServerCreate: (paymentId) => { /* lógica no seu servidor */ },
-                    onCancel: (paymentId) => { alert("Pagamento cancelado"); },
-                    onError: (error, paymentId) => { alert("Erro: " + error); },
-                });
-            } catch (err) {
-                alert("Erro ao iniciar transação: " + err);
+        document.getElementById('btn-teste').addEventListener('click', () => {
+            if (window.Pi) {
+                alert("SDK da Pi carregado com sucesso!");
+            } else {
+                alert("Erro: SDK da Pi não foi encontrado.");
             }
         });
     </script>
