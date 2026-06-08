@@ -2,7 +2,6 @@
 <html>
 <head>
     <title>Pi Quest Evolution</title>
-    <!-- SDK oficial da Pi Network -->
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 </head>
 <body>
@@ -11,19 +10,19 @@
 
     <script>
         document.getElementById('btn-pagamento').addEventListener('click', async () => {
+            alert("Botão clicado!");
             try {
-                // Chama a função de pagamento da SDK da Pi
                 const payment = await Pi.createPayment({
-                    amount: 0.1, 
-                    memo: "Teste do Pi Quest Evolution",
+                    amount: 0.1,
+                    memo: "Teste",
                     metadata: { type: "test" },
                 }, {
-                    onReadyForServerCreate: (paymentId) => { alert("Preparado! ID: " + paymentId); },
-                    onCancel: (paymentId) => { alert("Pagamento cancelado"); },
-                    onError: (error, paymentId) => { alert("Erro: " + error.message); },
+                    onReadyForServerCreate: (id) => alert("Preparado: " + id),
+                    onCancel: () => alert("Cancelado"),
+                    onError: (err) => alert("Erro: " + err.message),
                 });
             } catch (err) {
-                alert("Erro ao iniciar: " + err);
+                alert("Erro catch: " + err);
             }
         });
     </script>
