@@ -2,41 +2,30 @@
 <html>
 <head>
     <title>Pi Quest Evolution</title>
-    <script src="https://sdk.pyi.com/sdk.js"></script>
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 </head>
 <body>
     <h1>Bem-vindo ao Pi Quest Evolution</h1>
     <p>Clique no botão abaixo para testar a transação:</p>
     
-    <button id="btn-pagar">Processar Pagamento de Teste</button>
+    <button id="btn-pagamento">Processar Pagamento de Teste</button>
 
     <script>
-        // Inicializa o SDK
-        Pi.init({ version: "2.0", sandbox: true });
-
-        document.getElementById('btn-pagar').addEventListener('click', async () => {
+        const Pi = window.Pi;
+        document.getElementById('btn-pagamento').addEventListener('click', async () => {
             try {
+                // Aqui iniciamos o pagamento de teste
                 const payment = await Pi.createPayment({
-                    amount: 0.01, // Valor de teste
-                    memo: "Teste de transação do app",
-                    metadata: { test: "teste_inicial" }
+                    amount: 0.1, // Quantidade de Pi para teste
+                    memo: "Teste de pagamento do Pi Quest Evolution",
+                    metadata: { type: "test" },
                 }, {
-                    onReadyForServerApproval: (paymentId) => {
-                        console.log("Pagamento pronto para aprovação:", paymentId);
-                    },
-                    onReadyForServerCompletion: (paymentId, txid) => {
-                        console.log("Pagamento completo:", txid);
-                        alert("Transação realizada com sucesso! ID: " + txid);
-                    },
-                    onCancel: (paymentId) => {
-                        alert("Pagamento cancelado.");
-                    },
-                    onError: (error, payment) => {
-                        console.error("Erro no pagamento:", error);
-                    }
+                    onReadyForServerCreate: (paymentId) => { /* lógica no seu servidor */ },
+                    onCancel: (paymentId) => { alert("Pagamento cancelado"); },
+                    onError: (error, paymentId) => { alert("Erro: " + error); },
                 });
             } catch (err) {
-                console.error("Erro ao criar pagamento:", err);
+                alert("Erro ao iniciar transação: " + err);
             }
         });
     </script>
