@@ -10,11 +10,13 @@
 
     <script>
         const Pi = window.Pi;
-        // Inicializa solicitando o escopo de pagamentos
-        Pi.init({ version: "2.0", sandbox: true, scope: ["payments"] });
+        Pi.init({ version: "2.0", sandbox: true });
 
         document.getElementById('btn-pagamento').addEventListener('click', async () => {
             try {
+                // Autentica solicitando explicitamente o escopo de pagamentos
+                const auth = await Pi.authenticate(["payments"], {});
+                
                 const payment = await Pi.createPayment({
                     amount: 0.1,
                     memo: "Teste",
@@ -25,7 +27,7 @@
                     onError: (err) => alert("Erro: " + err.message),
                 });
             } catch (err) {
-                alert("Erro ao iniciar: " + err);
+                alert("Erro: " + err.message);
             }
         });
     </script>
