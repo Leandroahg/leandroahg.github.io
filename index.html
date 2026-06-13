@@ -1,16 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Pagamento Pi</title>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-    <style>
-        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
-        button { padding: 20px 40px; font-size: 18px; cursor: pointer; background-color: #562e87; color: white; border: none; border-radius: 10px; }
-    </style>
 </head>
 <body>
-    <h1>App de Teste</h1>
     <button id="btn-pagar">Pagar 0.1 Pi</button>
 
     <script>
@@ -19,16 +12,17 @@
 
         document.getElementById('btn-pagar').addEventListener('click', async () => {
             try {
-                // Autenticação para pedir permissão de pagamento
+                // Autenticação obrigatória
                 await Pi.authenticate(['payments'], {});
 
-                // Criação do pagamento com a opção de rede nula (faz o seletor aparecer)
+                // Criação do pagamento com TODAS as funções de retorno exigidas
                 await Pi.createPayment({
                     amount: 0.1,
                     memo: "Teste",
                     metadata: { type: "test" }
                 }, {
-                    network: null,
+                    onReadyForServerCreate: (paymentId) => {},
+                    onReadyForServerApproval: (paymentId) => {},
                     onReadyForServerCompletion: (paymentId, txid) => { alert("Sucesso! TXID: " + txid); },
                     onCancel: (paymentId) => { alert("Cancelado."); },
                     onError: (error, paymentId) => { alert("Erro: " + error.message); }
