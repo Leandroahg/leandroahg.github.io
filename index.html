@@ -19,12 +19,10 @@
 
         document.getElementById('btn-pagar').addEventListener('click', async () => {
             try {
-                // 1. PRIMEIRO: Pedimos a autorização de "payments"
-                await Pi.authenticate(['payments'], {
-                    onIncompletePaymentFound: (payment) => { console.log("Pagamento pendente encontrado"); }
-                });
+                // 1. Autenticação forçada
+                await Pi.authenticate(['payments'], {});
 
-                // 2. SEGUNDO: Só criamos o pagamento se a autorização acima der certo
+                // 2. Criação do pagamento
                 await Pi.createPayment({
                     amount: 0.1,
                     memo: "Teste",
@@ -33,11 +31,11 @@
                     onReadyForServerCreate: (paymentId) => { console.log("ID criado:", paymentId); },
                     onReadyForServerApproval: (paymentId) => { console.log("Aprovando:", paymentId); },
                     onReadyForServerCompletion: (paymentId, txid) => { alert("Sucesso! TXID: " + txid); },
-                    onCancel: (paymentId) => { alert("Cancelado pelo usuário."); },
-                    onError: (error, paymentId) => { alert("Erro no pagamento: " + error.message); }
+                    onCancel: (paymentId) => { alert("Cancelado."); },
+                    onError: (error, paymentId) => { alert("Erro: " + error.message); }
                 });
             } catch (err) {
-                alert("Erro ao autorizar: " + err.message);
+                alert("Erro ao conectar: " + err.message);
             }
         });
     </script>
