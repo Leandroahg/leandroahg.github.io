@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Pagamento Pi</title>
+    <title>Pi Quest Evolution</title>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 </head>
 <body>
@@ -10,28 +10,28 @@
     <button id="btn-pagar" style="padding: 20px; font-size: 18px;">Pagar 0.1 Pi</button>
 
     <script>
-        // Inicializa o SDK com segurança
+        // Inicialização obrigatória para Testnet (conforme seu painel)
         const Pi = window.Pi;
         Pi.init({ version: "2.0", sandbox: true });
 
         document.getElementById('btn-pagar').addEventListener('click', async () => {
             try {
-                // Autentica o usuário primeiro
+                // 1. Autenticação obrigatória antes de qualquer pagamento
                 await Pi.authenticate(['payments'], (authErr) => {
                     if (authErr) throw authErr;
                 });
 
-                // Cria o pagamento
+                // 2. Criação da transação
                 await Pi.createPayment({
                     amount: 0.1,
-                    memo: "Teste de integração",
+                    memo: "Teste de conclusão da tarefa 10",
                     metadata: { type: "test" }
                 }, {
                     onReadyForServerCreate: (paymentId) => {
                         console.log("Pagamento criado:", paymentId);
                     },
-                    // Esta função é o que força a abertura da carteira
                     onReadyForServerApproval: (paymentId) => {
+                        // Comando que força a abertura da carteira para o usuário
                         Pi.approvePayment(paymentId);
                     },
                     onReadyForServerCompletion: (paymentId, txid) => {
@@ -41,11 +41,11 @@
                         alert("Pagamento cancelado.");
                     },
                     onError: (error, paymentId) => {
-                        alert("Erro: " + error.message);
+                        alert("Erro no pagamento: " + error.message);
                     }
                 });
             } catch (err) {
-                alert("Erro crítico: " + err.message);
+                alert("Erro ao processar: " + err.message);
             }
         });
     </script>
