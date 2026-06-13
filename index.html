@@ -1,36 +1,16 @@
 <script>
     const Pi = window.Pi;
-    Pi.init({ version: "2.0", sandbox: false });
+    
+    // Teste de conexão com o SDK
+    try {
+        Pi.init({ version: "2.0", sandbox: false });
+        alert("SDK Carregado com sucesso!");
+    } catch (e) {
+        alert("Erro ao carregar SDK: " + e.message);
+    }
 
     document.getElementById('btn-pagar').addEventListener('click', async () => {
-        try {
-            console.log("Iniciando autenticação...");
-            await Pi.authenticate(['payments'], (authErr) => {
-                if (authErr) throw authErr;
-            });
-
-            console.log("Criando pagamento...");
-            await Pi.createPayment({
-                amount: 0.1,
-                memo: "Teste de integração",
-                metadata: { type: "test" }
-            }, {
-                onReadyForServerCreate: (paymentId) => {
-                    console.log("Pagamento criado com ID:", paymentId);
-                    Pi.approvePayment(paymentId); // Forçando a aprovação aqui
-                },
-                onReadyForServerCompletion: (paymentId, txid) => {
-                    alert("Sucesso! TXID: " + txid);
-                },
-                onCancel: (paymentId) => {
-                    alert("Cancelado.");
-                },
-                onError: (error, paymentId) => {
-                    alert("Erro no pagamento: " + error.message);
-                }
-            });
-        } catch (err) {
-            alert("Erro crítico: " + err.message);
-        }
+        alert("Botão clicado! Tentando processar...");
+        // O código de pagamento entra aqui depois que confirmarmos que o SDK carrega
     });
 </script>
