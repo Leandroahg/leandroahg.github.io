@@ -1,39 +1,48 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
-    <title>Pi Quest Evolution</title>
+    <meta charset="UTF-8">
+    <title>Pagamento Pi</title>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <style>
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+        button { padding: 20px 40px; font-size: 18px; cursor: pointer; background-color: #562e87; color: white; border: none; border-radius: 10px; }
+    </style>
 </head>
 <body>
-    <h1>Pi Quest Evolution</h1>
-    <button id="btn-pagamento">Processar Pagamento de Teste</button>
+    <h1>App de Teste</h1>
+    <button id="btn-pagar">Pagar 0.1 Pi</button>
 
     <script>
         const Pi = window.Pi;
         Pi.init({ version: "2.0", sandbox: true });
 
-        document.getElementById('btn-pagamento').addEventListener('click', () => {
-            Pi.createPayment({
-                amount: 0.1,
-                memo: "Teste",
-                metadata: {}
-            }, {
-                onReadyForServerCreate: (paymentId) => {
-                    console.log("ID criado:", paymentId);
-                },
-                onReadyForServerApproval: (paymentId) => {
-                    console.log("Aprovação solicitada:", paymentId);
-                },
-                onReadyForServerCompletion: (paymentId, txid) => {
-                    alert("Sucesso! TXID: " + txid);
-                },
-                onCancel: (paymentId) => {
-                    alert("Cancelado");
-                },
-                onError: (error, paymentId) => {
-                    alert("Erro: " + error.message);
-                }
-            });
+        document.getElementById('btn-pagar').addEventListener('click', async () => {
+            try {
+                await Pi.createPayment({
+                    amount: 0.1,
+                    memo: "Teste",
+                    metadata: { type: "test" }
+                }, {
+                    onReadyForServerCreate: (paymentId) => {
+                        console.log("ID criado:", paymentId);
+                    },
+                    onReadyForServerApproval: (paymentId) => {
+                        console.log("Aprovando:", paymentId);
+                    },
+                    onReadyForServerCompletion: (paymentId, txid) => {
+                        alert("Sucesso! TXID: " + txid);
+                    },
+                    onCancel: (paymentId) => {
+                        alert("Cancelado pelo usuário.");
+                    },
+                    onError: (error, paymentId) => {
+                        alert("Erro: " + error.message);
+                    }
+                });
+            } catch (err) {
+                alert("Erro ao iniciar: " + err.message);
+            }
         });
     </script>
 </body>
