@@ -19,29 +19,25 @@
 
         document.getElementById('btn-pagar').addEventListener('click', async () => {
             try {
+                // 1. PRIMEIRO: Pedimos a autorização de "payments"
+                await Pi.authenticate(['payments'], {
+                    onIncompletePaymentFound: (payment) => { console.log("Pagamento pendente encontrado"); }
+                });
+
+                // 2. SEGUNDO: Só criamos o pagamento se a autorização acima der certo
                 await Pi.createPayment({
                     amount: 0.1,
                     memo: "Teste",
                     metadata: { type: "test" }
                 }, {
-                    onReadyForServerCreate: (paymentId) => {
-                        console.log("ID criado:", paymentId);
-                    },
-                    onReadyForServerApproval: (paymentId) => {
-                        console.log("Aprovando:", paymentId);
-                    },
-                    onReadyForServerCompletion: (paymentId, txid) => {
-                        alert("Sucesso! TXID: " + txid);
-                    },
-                    onCancel: (paymentId) => {
-                        alert("Cancelado pelo usuário.");
-                    },
-                    onError: (error, paymentId) => {
-                        alert("Erro: " + error.message);
-                    }
+                    onReadyForServerCreate: (paymentId) => { console.log("ID criado:", paymentId); },
+                    onReadyForServerApproval: (paymentId) => { console.log("Aprovando:", paymentId); },
+                    onReadyForServerCompletion: (paymentId, txid) => { alert("Sucesso! TXID: " + txid); },
+                    onCancel: (paymentId) => { alert("Cancelado pelo usuário."); },
+                    onError: (error, paymentId) => { alert("Erro no pagamento: " + error.message); }
                 });
             } catch (err) {
-                alert("Erro ao iniciar: " + err.message);
+                alert("Erro ao autorizar: " + err.message);
             }
         });
     </script>
