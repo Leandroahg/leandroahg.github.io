@@ -19,17 +19,16 @@
 
         document.getElementById('btn-pagar').addEventListener('click', async () => {
             try {
-                // 1. Autenticação forçada
+                // Autenticação para pedir permissão de pagamento
                 await Pi.authenticate(['payments'], {});
 
-                // 2. Criação do pagamento
+                // Criação do pagamento com a opção de rede nula (faz o seletor aparecer)
                 await Pi.createPayment({
                     amount: 0.1,
                     memo: "Teste",
                     metadata: { type: "test" }
                 }, {
-                    onReadyForServerCreate: (paymentId) => { console.log("ID criado:", paymentId); },
-                    onReadyForServerApproval: (paymentId) => { console.log("Aprovando:", paymentId); },
+                    network: null,
                     onReadyForServerCompletion: (paymentId, txid) => { alert("Sucesso! TXID: " + txid); },
                     onCancel: (paymentId) => { alert("Cancelado."); },
                     onError: (error, paymentId) => { alert("Erro: " + error.message); }
