@@ -14,28 +14,30 @@
 
         document.getElementById('btn-pagamento').addEventListener('click', async () => {
             try {
-                // 1. Tenta autenticar primeiro
-                const user = await Pi.authenticate(['payments'], {
+                // Autenticação
+                await Pi.authenticate(['payments'], {
                     onIncompletePaymentFound: (payment) => { console.log(payment); }
                 });
 
-                // 2. Se autenticou, tenta criar o pagamento
+                // Criação do pagamento
                 await Pi.createPayment({
                     amount: 0.1,
                     memo: "Teste final",
                     metadata: { type: "test" },
                 }, {
                     onReadyForServerCreate: (paymentId) => { 
-                        console.log("ID criado: " + paymentId); 
+                        alert("Pagamento iniciado! Aguarde a tela de aprovação."); 
                     },
                     onReadyForServerApproval: (paymentId) => { 
-                        alert("Aprovando pagamento: " + paymentId); 
+                        console.log("Aprovação solicitada: " + paymentId);
                     },
                     onReadyForServerCompletion: (paymentId, txid) => { 
-                        alert("Sucesso! ID: " + txid); 
+                        alert("Sucesso! Transação concluída: " + txid); 
                     },
-                    onCancel: (paymentId) => { alert("Cancelado"); },
-                    onError: (error, paymentId) => { alert("Erro: " + error.message); }
+                    onCancel: (paymentId) => { alert("Pagamento cancelado."); },
+                    onError: (error, paymentId) => { 
+                        alert("Erro: " + error.message); 
+                    }
                 });
             } catch (err) {
                 alert("Erro ao processar: " + err.message);
