@@ -1,36 +1,35 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-</head>
-<body>
-    <button id="btn-pagar">Pagar 0.1 Pi</button>
+<script>
+    const Pi = window.Pi;
+    Pi.init({ version: "2.0", sandbox: false });
 
-    <script>
-        const Pi = window.Pi;
-        Pi.init({ version: "2.0", sandbox: true });
-
-        document.getElementById('btn-pagar').addEventListener('click', async () => {
-            try {
-                // Autenticação obrigatória
-                await Pi.authenticate(['payments'], {});
-
-                // Criação do pagamento com TODAS as funções de retorno exigidas
-                await Pi.createPayment({
-                    amount: 0.1,
-                    memo: "Teste",
-                    metadata: { type: "test" }
-                }, {
-                    onReadyForServerCreate: (paymentId) => {},
-                    onReadyForServerApproval: (paymentId) => {},
-                    onReadyForServerCompletion: (paymentId, txid) => { alert("Sucesso! TXID: " + txid); },
-                    onCancel: (paymentId) => { alert("Cancelado."); },
-                    onError: (error, paymentId) => { alert("Erro: " + error.message); }
-                });
-            } catch (err) {
-                alert("Erro ao conectar: " + err.message);
-            }
-        });
-    </script>
-</body>
-</html>
+    document.getElementById('btn-pagar').addEventListener('click', async () => {
+        try {
+            await Pi.authenticate(['payments'], () => {});
+            
+            await Pi.createPayment({
+                amount: 0.1,
+                memo: "Teste de integração",
+                metadata: { type: "test" }
+            }, {
+                onReadyForServerCreate: (paymentId) => {
+                    console.log("Pagamento criado:", paymentId);
+                },
+                onReadyForServerApproval: (paymentId) => {
+                    // Este comando força a abertura da carteira para o usuário
+                    Pi.approvePayment(paymentId);
+                },
+                onReadyForServerCompletion: (paymentId, txid) => {
+                    alert("Sucesso! Transação completa: " + txid);
+                },
+                onCancel: (paymentId) => {
+                    alert("Pagamento cancelado.");
+                },
+                onError: (error, paymentId) => {
+                    alert("Erro: " + error.message);
+                }
+            });
+        } catch (err) {
+            alert("Erro na conexão: " + err.message);
+        }
+    });
+</script>
