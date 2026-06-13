@@ -10,18 +10,18 @@
     <button id="btn-pagar" style="padding: 20px; font-size: 18px;">Pagar 0.1 Pi</button>
 
     <script>
-        // Inicialização obrigatória para Testnet (conforme seu painel)
+        // O Pi SDK exige sandbox: false para transações reais de validação (etapa 10)
         const Pi = window.Pi;
-        Pi.init({ version: "2.0", sandbox: true });
+        Pi.init({ version: "2.0", sandbox: false });
 
         document.getElementById('btn-pagar').addEventListener('click', async () => {
             try {
-                // 1. Autenticação obrigatória antes de qualquer pagamento
+                // Autenticação
                 await Pi.authenticate(['payments'], (authErr) => {
                     if (authErr) throw authErr;
                 });
 
-                // 2. Criação da transação
+                // Criação do pagamento
                 await Pi.createPayment({
                     amount: 0.1,
                     memo: "Teste de conclusão da tarefa 10",
@@ -31,14 +31,14 @@
                         console.log("Pagamento criado:", paymentId);
                     },
                     onReadyForServerApproval: (paymentId) => {
-                        // Comando que força a abertura da carteira para o usuário
+                        // Comando que força a abertura da carteira
                         Pi.approvePayment(paymentId);
                     },
                     onReadyForServerCompletion: (paymentId, txid) => {
-                        alert("Sucesso! TXID: " + txid);
+                        alert("Sucesso! Transação completa: " + txid);
                     },
                     onCancel: (paymentId) => {
-                        alert("Pagamento cancelado.");
+                        alert("Cancelado pelo usuário.");
                     },
                     onError: (error, paymentId) => {
                         alert("Erro no pagamento: " + error.message);
