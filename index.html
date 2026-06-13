@@ -1,40 +1,24 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Pi Quest Evolution</title>
-    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-</head>
-<body>
-    <h1>Pi Quest Evolution</h1>
-    <button id="btn-pagamento">Processar Pagamento de Teste</button>
+document.getElementById('btn-pagamento').addEventListener('click', async () => {
+  try {
+    // Autenticação necessária antes do pagamento
+    await Pi.authenticate(['payments'], {
+      onIncompletePaymentFound: (payment) => { console.log(payment); },
+      onReadyForServerCreate: (payment) => { console.log(payment); }
+    });
 
-    <script>
-        const Pi = window.Pi;
-        Pi.init({ version: "2.0", sandbox: true });
-
-        document.getElementById('btn-pagamento').addEventListener('click', async () => {
-            try {
-                // Autenticação necessária antes do pagamento
-                await Pi.authenticate(["payments"], {
-                    onIncompletePaymentFound: (payment) => { console.log(payment); },
-                    onReadyForServerCreate: (payment) => { console.log(payment); }
-                });
-
-                // Criação do pagamento
-                await Pi.createPayment({
-                    amount: 0.1,
-                    memo: "Teste final",
-                    metadata: { type: "test" },
-                }, {
-                    onReadyForServerCreate: (paymentId) => { alert("ID Gerado: " + paymentId); },
-                    onCancel: (paymentId) => { alert("Cancelado"); },
-                    onError: (error, paymentId) => { alert("Erro: " + error.message); },
-                    onAlgorithmDecisionMade: (paymentId) => { alert("Decisão do algoritmo feita"); }
-                });
-            } catch (err) {
-                alert("Erro: " + err.message);
-            }
-        });
-    </script>
-</body>
-</html>
+    // Criação do pagamento
+    await Pi.createPayment({
+      amount: 0.1,
+      memo: "Teste final",
+      metadata: { type: "test" },
+    }, {
+      onReadyForServerCreate: (paymentId) => { alert("ID Gerado: " + paymentId); },
+      onReadyForServerApproval: (paymentId) => { alert("Pronto para aprovação: " + paymentId); },
+      onReadyForServerCompletion: (paymentId, txid) => { alert("Pagamento concluído! TXID: " + txid); },
+      onCancel: (paymentId) => { alert("Pagamento cancelado"); },
+      onError: (error, paymentId) => { alert("Erro: " + error.message); }
+    });
+  } catch (err) {
+    alert("Erro: " + err.message);
+  }
+});
