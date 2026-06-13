@@ -1,16 +1,58 @@
-<script>
-    const Pi = window.Pi;
-    
-    // Teste de conexão com o SDK
-    try {
-        Pi.init({ version: "2.0", sandbox: false });
-        alert("SDK Carregado com sucesso!");
-    } catch (e) {
-        alert("Erro ao carregar SDK: " + e.message);
-    }
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Teste de Pagamento</title>
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+</head>
+<body>
 
-    document.getElementById('btn-pagar').addEventListener('click', async () => {
-        alert("Botão clicado! Tentando processar...");
-        // O código de pagamento entra aqui depois que confirmarmos que o SDK carrega
-    });
-</script>
+    <button id="btn-pagar">Pagar 0.1 Pi</button>
+
+    <script>
+        // Função para garantir que o Pi SDK esteja carregado
+        function iniciarPagamento() {
+            if (typeof Pi === 'undefined') {
+                alert("O Pi SDK ainda não carregou. Aguarde um segundo e clique novamente.");
+                return;
+            }
+
+            try {
+                Pi.init({ version: "2.0", sandbox: false });
+
+                document.getElementById('btn-pagar').addEventListener('click', async () => {
+                    try {
+                        await Pi.authenticate(['payments'], () => {});
+                        
+                        await Pi.createPayment({
+                            amount: 0.1,
+                            memo: "Teste de integração",
+                            metadata: { type: "test" }
+                        }, {
+                            onReadyForServerApproval: (paymentId) => {
+                                Pi.approvePayment(paymentId);
+                            },
+                            onReadyForServerCompletion: (paymentId, txid) => {
+                                alert("Sucesso! TXID: " + txid);
+                            },
+                            onCancel: (paymentId) => {
+                                alert("Cancelado.");
+                            },
+                            onError: (error, paymentId) => {
+                                alert("Erro: " + error.message);
+                            }
+                        });
+                    } catch (err) {
+                        alert("Erro ao pagar: " + err.message);
+                    }
+                });
+            } catch (err) {
+                alert("Erro no Pi.init: " + err.message);
+            }
+        }
+
+        // Aguarda o carregamento da janela para garantir que o script carregou
+        window.onload = iniciarPagamento;
+    </script>
+</body>
+</html>
